@@ -1,0 +1,8 @@
+[project]
+name = "pharmacy-care-continuity"
+version = "0.1.0"
+description = "药店健康陪伴责任链领域契约"
+requires-python = ">=3.11"
+
+[tool.unittest]
+start-directory = "tests"
