@@ -1,0 +1,384 @@
+{
+  "scenario": "慢病顾客甲店建档、乙店承接提醒、甲店停业后义务移交乙店、缺药由丙店应急供应",
+  "events": [
+    {
+      "event_id": "evt-consent",
+      "event_type": "CONSENT_GRANTED",
+      "aggregate_type": "consent_grant",
+      "aggregate_id": "grant-S-1001",
+      "occurred_at": "2026-09-20T09:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "store_id": "store-A",
+        "scopes": ["care_profile", "medication_reminder", "adherence_followup", "cross_store_handoff", "emergency_supply", "marketing_use"],
+        "granted_at": "2026-09-20T09:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-qual-a",
+      "event_type": "PHARMACIST_QUALIFIED",
+      "aggregate_type": "pharmacist_profile",
+      "aggregate_id": "P-A",
+      "occurred_at": "2026-01-01T00:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "pharmacist_id": "P-A",
+        "store_id": "store-A",
+        "qualification": "licensed_pharmacist",
+        "valid_from": "2026-01-01T00:00:00+08:00",
+        "valid_until": "2027-12-31T23:59:59+08:00"
+      }
+    },
+    {
+      "event_id": "evt-qual-b",
+      "event_type": "PHARMACIST_QUALIFIED",
+      "aggregate_type": "pharmacist_profile",
+      "aggregate_id": "P-B",
+      "occurred_at": "2026-01-01T00:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "pharmacist_id": "P-B",
+        "store_id": "store-B",
+        "qualification": "clinical_pharmacist",
+        "valid_from": "2026-01-01T00:00:00+08:00",
+        "valid_until": "2027-12-31T23:59:59+08:00"
+      }
+    },
+    {
+      "event_id": "evt-qual-c",
+      "event_type": "PHARMACIST_QUALIFIED",
+      "aggregate_type": "pharmacist_profile",
+      "aggregate_id": "P-C",
+      "occurred_at": "2026-01-01T00:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "pharmacist_id": "P-C",
+        "store_id": "store-C",
+        "qualification": "licensed_pharmacist",
+        "valid_from": "2026-01-01T00:00:00+08:00",
+        "valid_until": "2027-12-31T23:59:59+08:00"
+      }
+    },
+    {
+      "event_id": "evt-qual-v",
+      "event_type": "PHARMACIST_QUALIFIED",
+      "aggregate_type": "pharmacist_profile",
+      "aggregate_id": "P-V",
+      "occurred_at": "2026-01-01T00:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "pharmacist_id": "P-V",
+        "store_id": "verification-center",
+        "qualification": "clinical_pharmacist",
+        "valid_from": "2026-01-01T00:00:00+08:00",
+        "valid_until": "2027-12-31T23:59:59+08:00"
+      }
+    },
+    {
+      "event_id": "evt-shift-b",
+      "event_type": "PHARMACIST_SHIFT_SCHEDULED",
+      "aggregate_type": "pharmacist_assignment",
+      "aggregate_id": "shift-P-B-20260925",
+      "occurred_at": "2026-09-20T08:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "pharmacist_id": "P-B",
+        "store_id": "store-B",
+        "shift_start": "2026-09-25T08:00:00+08:00",
+        "shift_end": "2026-09-25T20:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-src",
+      "event_type": "MEDICATION_SOURCE_DECLARED",
+      "aggregate_type": "medication_source",
+      "aggregate_id": "medsrc-S-1001-01",
+      "occurred_at": "2026-09-20T09:10:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "medication": "二甲双胍",
+        "source_kind": "external_prescription",
+        "declared_at": "2026-09-20T09:10:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-plan-1",
+      "event_type": "PLAN_ACTIVATED",
+      "aggregate_type": "service_plan",
+      "aggregate_id": "plan-S-1001",
+      "occurred_at": "2026-09-20T09:20:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "plan_id": "plan-S-1001",
+        "plan_version": 1,
+        "pharmacist_id": "P-A",
+        "store_id": "store-A",
+        "sales_influence": "none",
+        "activated_at": "2026-09-20T09:20:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-reminder-1",
+      "event_type": "REMINDER_FIRED",
+      "aggregate_type": "reminder",
+      "aggregate_id": "reminder-S-1001-01",
+      "occurred_at": "2026-09-20T09:30:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "store_id": "store-A",
+        "plan_id": "plan-S-1001",
+        "plan_version": 1,
+        "reminder_id": "reminder-S-1001-01",
+        "obligation_id": "obligation-S-1001-01",
+        "window_start": "2026-09-20T09:30:00+08:00",
+        "window_end": "2026-09-20T11:30:00+08:00",
+        "factual_basis": {"based_on_event_id": "evt-plan-1", "reason": "计划v1用药时点"},
+        "fired_at": "2026-09-20T09:30:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-fu-1",
+      "event_type": "FOLLOWUP_RECORDED",
+      "aggregate_type": "service_fact",
+      "aggregate_id": "fact-S-1001-adherence",
+      "occurred_at": "2026-09-20T10:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "store_id": "store-A",
+        "fact_key": "fact-S-1001-adherence",
+        "content_hash": "sha256:a1b2",
+        "recorded_by": "P-A",
+        "recorded_at": "2026-09-20T10:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-fu-2",
+      "event_type": "FOLLOWUP_RECORDED",
+      "aggregate_type": "service_fact",
+      "aggregate_id": "fact-S-1001-adherence",
+      "occurred_at": "2026-09-22T10:00:00+08:00",
+      "version": 2,
+      "payload": {
+        "subject_id": "S-1001",
+        "store_id": "store-B",
+        "fact_key": "fact-S-1001-adherence",
+        "content_hash": "sha256:c3d4",
+        "recorded_by": "worker-B-07",
+        "recorded_at": "2026-09-22T10:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-conflict",
+      "event_type": "FACT_CONFLICT_REPORTED",
+      "aggregate_type": "service_fact",
+      "aggregate_id": "fact-S-1001-adherence",
+      "occurred_at": "2026-09-22T11:00:00+08:00",
+      "version": 3,
+      "payload": {
+        "subject_id": "S-1001",
+        "fact_key": "fact-S-1001-adherence",
+        "reported_by": "worker-B-07",
+        "reported_at": "2026-09-22T11:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-verify",
+      "event_type": "FACT_VERIFIED",
+      "aggregate_type": "service_fact",
+      "aggregate_id": "fact-S-1001-adherence",
+      "occurred_at": "2026-09-22T12:00:00+08:00",
+      "version": 4,
+      "payload": {
+        "subject_id": "S-1001",
+        "fact_key": "fact-S-1001-adherence",
+        "verifier_id": "P-V",
+        "verifier_sales_independent": true,
+        "resolution": "corrected",
+        "verified_at": "2026-09-22T12:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-confirm-1",
+      "event_type": "SERVICE_CONFIRMED",
+      "aggregate_type": "obligation",
+      "aggregate_id": "obligation-S-1001-01",
+      "occurred_at": "2026-09-22T13:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "store_id": "store-A",
+        "fact_key": "fact-S-1001-adherence",
+        "obligation_id": "obligation-S-1001-01",
+        "pharmacist_id": "P-A",
+        "personally_performed": true,
+        "confirmed_at": "2026-09-22T13:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-reminder-2",
+      "event_type": "REMINDER_FIRED",
+      "aggregate_type": "reminder",
+      "aggregate_id": "reminder-S-1001-02",
+      "occurred_at": "2026-09-23T09:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "store_id": "store-A",
+        "plan_id": "plan-S-1001",
+        "plan_version": 1,
+        "reminder_id": "reminder-S-1001-02",
+        "obligation_id": "obligation-S-1001-02",
+        "window_start": "2026-09-23T09:00:00+08:00",
+        "window_end": "2026-09-25T21:00:00+08:00",
+        "factual_basis": {"based_on_event_id": "evt-plan-1", "reason": "计划v1续方提醒"},
+        "fired_at": "2026-09-23T09:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-store-a-out",
+      "event_type": "STORE_WITHDRAWN",
+      "aggregate_type": "store",
+      "aggregate_id": "store-A",
+      "occurred_at": "2026-09-24T17:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "store_id": "store-A",
+        "effective_at": "2026-09-24T18:00:00+08:00",
+        "reason": "store_closed"
+      }
+    },
+    {
+      "event_id": "evt-handoff-prop",
+      "event_type": "HANDOFF_PROPOSED",
+      "aggregate_type": "continuity_handoff",
+      "aggregate_id": "handoff-A-B-001",
+      "occurred_at": "2026-09-24T19:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "handoff_id": "handoff-A-B-001",
+        "subject_id": "S-1001",
+        "obligation_ids": ["obligation-S-1001-02"],
+        "from_store": "store-A",
+        "to_store": "store-B",
+        "proposed_at": "2026-09-24T19:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-handoff-done",
+      "event_type": "HANDOFF_COMPLETED",
+      "aggregate_type": "continuity_handoff",
+      "aggregate_id": "handoff-A-B-001",
+      "occurred_at": "2026-09-24T19:30:00+08:00",
+      "version": 2,
+      "payload": {
+        "handoff_id": "handoff-A-B-001",
+        "subject_id": "S-1001",
+        "obligation_ids": ["obligation-S-1001-02"],
+        "from_store": "store-A",
+        "to_store": "store-B",
+        "completed_at": "2026-09-24T19:30:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-plan-2",
+      "event_type": "PLAN_REVISED",
+      "aggregate_type": "service_plan",
+      "aggregate_id": "plan-S-1001",
+      "occurred_at": "2026-09-25T09:00:00+08:00",
+      "version": 2,
+      "payload": {
+        "subject_id": "S-1001",
+        "plan_id": "plan-S-1001",
+        "plan_version": 2,
+        "supersedes_version": 1,
+        "pharmacist_id": "P-B",
+        "revised_at": "2026-09-25T09:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-reminder-3",
+      "event_type": "REMINDER_FIRED",
+      "aggregate_type": "reminder",
+      "aggregate_id": "reminder-S-1001-03",
+      "occurred_at": "2026-09-25T10:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "store_id": "store-B",
+        "plan_id": "plan-S-1001",
+        "plan_version": 2,
+        "reminder_id": "reminder-S-1001-03",
+        "obligation_id": "obligation-S-1001-03",
+        "window_start": "2026-09-25T10:00:00+08:00",
+        "window_end": "2026-09-25T20:00:00+08:00",
+        "factual_basis": {"based_on_event_id": "evt-plan-2", "reason": "计划v2用药时点"},
+        "fired_at": "2026-09-25T10:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-escalate",
+      "event_type": "ANOMALY_ESCALATED",
+      "aggregate_type": "obligation",
+      "aggregate_id": "obligation-S-1001-03",
+      "occurred_at": "2026-09-25T10:30:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "store_id": "store-B",
+        "obligation_id": "obligation-S-1001-03",
+        "reason_code": "medication_shortage",
+        "escalated_at": "2026-09-25T10:30:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-stock",
+      "event_type": "EMERGENCY_STOCK_COMMITTED",
+      "aggregate_type": "emergency_stock",
+      "aggregate_id": "stock-S-1001-01",
+      "occurred_at": "2026-09-25T11:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "store_id": "store-C",
+        "obligation_id": "obligation-S-1001-03",
+        "medication": "二甲双胍",
+        "quantity": 2,
+        "available_from": "2026-09-25T12:00:00+08:00",
+        "committed_at": "2026-09-25T11:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-consent-withdraw",
+      "event_type": "CONSENT_WITHDRAWN",
+      "aggregate_type": "consent_grant",
+      "aggregate_id": "grant-S-1001",
+      "occurred_at": "2026-09-25T12:00:00+08:00",
+      "version": 2,
+      "payload": {
+        "grant_id": "grant-S-1001",
+        "scopes_withdrawn": ["marketing_use"],
+        "withdrawn_at": "2026-09-25T12:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "evt-exit",
+      "event_type": "CARE_EXITED",
+      "aggregate_type": "care_exit",
+      "aggregate_id": "exit-S-1001",
+      "occurred_at": "2026-09-25T13:00:00+08:00",
+      "version": 1,
+      "payload": {
+        "subject_id": "S-1001",
+        "decided_by": "S-1001",
+        "exit_kind": "subject_withdrawal",
+        "effective_at": "2026-09-25T13:00:00+08:00",
+        "legal_proof_retained": true
+      }
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "药店健康陪伴责任链领域事件",
+  "description": "围绕顾客健康陪伴责任（而非订单）的事件交换契约。事件流业务规则见 stream_constraints，受限接口视图见 view.schema.json。",
   "type": "object",
   "required": [
     "event_id",
@@ -19,20 +20,43 @@
     "event_type": {
       "type": "string",
       "enum": [
-        "CONSENT_RECORDED",
+        "CONSENT_GRANTED",
+        "CONSENT_WITHDRAWN",
+        "PHARMACIST_QUALIFIED",
+        "PHARMACIST_SHIFT_SCHEDULED",
+        "QUALIFICATION_REVOKED",
+        "MEDICATION_SOURCE_DECLARED",
         "PLAN_ACTIVATED",
+        "PLAN_REVISED",
+        "REMINDER_FIRED",
+        "FOLLOWUP_RECORDED",
         "SERVICE_CONFIRMED",
+        "FACT_CONFLICT_REPORTED",
+        "FACT_VERIFIED",
+        "ANOMALY_ESCALATED",
         "STORE_WITHDRAWN",
-        "HANDOFF_COMPLETED"
+        "HANDOFF_PROPOSED",
+        "HANDOFF_COMPLETED",
+        "EMERGENCY_STOCK_COMMITTED",
+        "CARE_EXITED"
       ]
     },
     "aggregate_type": {
       "type": "string",
       "enum": [
         "care_subject",
-        "service_plan",
+        "consent_grant",
+        "pharmacist_profile",
         "pharmacist_assignment",
-        "continuity_handoff"
+        "medication_source",
+        "service_plan",
+        "reminder",
+        "service_fact",
+        "obligation",
+        "store",
+        "continuity_handoff",
+        "emergency_stock",
+        "care_exit"
       ]
     },
     "aggregate_id": {
@@ -45,25 +69,104 @@
     },
     "version": {
       "type": "integer",
-      "minimum": 1
+      "minimum": 1,
+      "description": "同一 aggregate_id 内从 1 起严格递增；事件顺序以 occurred_at 为准。"
     },
     "payload": {
       "type": "object"
     }
   },
   "payload_required_by_event": {
-    "PLAN_ACTIVATED": [
-      "plan_version",
-      "pharmacist_id"
+    "CONSENT_GRANTED": ["subject_id", "store_id", "scopes", "granted_at"],
+    "CONSENT_WITHDRAWN": ["grant_id", "scopes_withdrawn", "withdrawn_at"],
+    "PHARMACIST_QUALIFIED": ["pharmacist_id", "store_id", "qualification", "valid_from", "valid_until"],
+    "PHARMACIST_SHIFT_SCHEDULED": ["pharmacist_id", "store_id", "shift_start", "shift_end"],
+    "QUALIFICATION_REVOKED": ["pharmacist_id", "store_id", "revoked_at"],
+    "MEDICATION_SOURCE_DECLARED": ["subject_id", "medication", "source_kind", "declared_at"],
+    "PLAN_ACTIVATED": ["subject_id", "plan_id", "plan_version", "pharmacist_id", "store_id", "sales_influence", "activated_at"],
+    "PLAN_REVISED": ["subject_id", "plan_id", "plan_version", "supersedes_version", "pharmacist_id", "revised_at"],
+    "REMINDER_FIRED": ["subject_id", "store_id", "plan_id", "plan_version", "reminder_id", "obligation_id", "window_start", "window_end", "factual_basis", "fired_at"],
+    "FOLLOWUP_RECORDED": ["subject_id", "store_id", "fact_key", "content_hash", "recorded_by", "recorded_at"],
+    "SERVICE_CONFIRMED": ["subject_id", "store_id", "fact_key", "obligation_id", "pharmacist_id", "personally_performed", "confirmed_at"],
+    "FACT_CONFLICT_REPORTED": ["subject_id", "fact_key", "reported_by", "reported_at"],
+    "FACT_VERIFIED": ["subject_id", "fact_key", "verifier_id", "verifier_sales_independent", "resolution", "verified_at"],
+    "ANOMALY_ESCALATED": ["subject_id", "store_id", "obligation_id", "reason_code", "escalated_at"],
+    "STORE_WITHDRAWN": ["store_id", "effective_at", "reason"],
+    "HANDOFF_PROPOSED": ["handoff_id", "subject_id", "obligation_ids", "from_store", "to_store", "proposed_at"],
+    "HANDOFF_COMPLETED": ["handoff_id", "subject_id", "obligation_ids", "from_store", "to_store", "completed_at"],
+    "EMERGENCY_STOCK_COMMITTED": ["subject_id", "store_id", "obligation_id", "medication", "quantity", "available_from", "committed_at"],
+    "CARE_EXITED": ["subject_id", "decided_by", "exit_kind", "effective_at", "legal_proof_retained"]
+  },
+  "enums": {
+    "consent_scope": [
+      "care_profile",
+      "medication_reminder",
+      "adherence_followup",
+      "cross_store_handoff",
+      "emergency_supply",
+      "marketing_use",
+      "data_sharing"
     ],
-    "STORE_WITHDRAWN": [
-      "effective_at",
-      "reason"
-    ],
-    "HANDOFF_COMPLETED": [
-      "from_store",
-      "to_store"
-    ]
+    "qualification": ["licensed_pharmacist", "clinical_pharmacist", "pharmacy_technician"],
+    "medication_source_kind": ["in_house_prescription", "external_prescription", "self_purchase"],
+    "sales_influence": ["none", "promotion_reviewed_and_rejected"],
+    "fact_resolution": ["confirmed", "corrected", "voided"],
+    "anomaly_reason_code": ["missed_followup_window", "medication_shortage", "unreachable_subject", "adverse_signal"],
+    "store_withdrawal_reason": ["store_closed", "network_restructure", "suspension"],
+    "exit_kind": ["subject_withdrawal", "plan_completed", "service_terminated"]
+  },
+  "roles": {
+    "description": "访问受限接口的角色。普通店员仅能看到 clerk 可见字段。",
+    "values": ["clerk", "pharmacist", "verifier_pharmacist", "subject"]
+  },
+  "payload_enums": {
+    "scopes": "consent_scope",
+    "scopes_withdrawn": "consent_scope",
+    "qualification": "qualification",
+    "source_kind": "medication_source_kind",
+    "sales_influence": "sales_influence",
+    "resolution": "fact_resolution",
+    "reason_code": "anomaly_reason_code",
+    "reason": "store_withdrawal_reason",
+    "exit_kind": "exit_kind"
+  },
+  "payload_datetime_fields": [
+    "granted_at",
+    "withdrawn_at",
+    "valid_from",
+    "valid_until",
+    "revoked_at",
+    "shift_start",
+    "shift_end",
+    "declared_at",
+    "activated_at",
+    "revised_at",
+    "fired_at",
+    "window_start",
+    "window_end",
+    "recorded_at",
+    "confirmed_at",
+    "reported_at",
+    "verified_at",
+    "escalated_at",
+    "effective_at",
+    "proposed_at",
+    "completed_at",
+    "available_from",
+    "committed_at"
+  ],
+  "payload_positive_integer_fields": ["plan_version", "supersedes_version", "quantity"],
+  "payload_string_array_fields": ["scopes", "scopes_withdrawn", "obligation_ids"],
+  "payload_boolean_fields": ["personally_performed", "verifier_sales_independent", "legal_proof_retained"],
+  "stream_constraints": {
+    "fact_dedup": "同一 subject_id 下 fact_key 相同的 FOLLOWUP_RECORDED 归并为同一 service_fact；矛盾事实必须经 FACT_VERIFIED 由 verifier_sales_independent=true 的药师裁定。",
+    "single_responsible_store": "同一义务集合在任一时刻至多有一家承接门店；后到的 HANDOFF_COMPLETED 若义务已被别家承接则冲突失败。",
+    "handoff_open_obligations_only": "HANDOFF_COMPLETED.obligation_ids 只能包含尚未履行/未关闭的义务。",
+    "pharmacist_signoff": "SERVICE_CONFIRMED 要求 personally_performed=true；签字药师在 confirmed_at 须具备有效资质，普通店员不得确认。",
+    "qualification_window": "药师专业行为时间必须落在 PHARMACIST_QUALIFIED.valid_from..valid_until 内且无 QUALIFICATION_REVOKED 撤销记录。",
+    "consent_gate": "提醒、回访、跨店交接、应急供应分别依赖 medication_reminder/adherence_followup/cross_store_handoff/emergency_supply 授权；marketing_use/data_sharing 撤回不影响法定购药与服务证明。",
+    "sales_firewall": "计划激活与修订不得携带促销优惠作为依据；sales_influence 只能取 none 或 promotion_reviewed_and_rejected。",
+    "exit_freezes_future": "CARE_EXITED 之后不得再产生该 subject 的提醒/回访/新义务；法定证明仍可出具。"
   },
   "additionalProperties": false
 }

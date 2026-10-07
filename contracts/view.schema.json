@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "药店健康陪伴责任链受限接口视图",
+  "description": "受限接口按角色返回的当前责任视图。必须说明当前责任人、采用的计划版本、每条提醒的事实依据，并声明系统不会自动作出诊断。普通店员只能看到 clerk_fields 白名单内字段。",
+  "type": "object",
+  "required": [
+    "subject_id",
+    "as_of",
+    "viewer_role",
+    "responsible",
+    "plan",
+    "active_reminders",
+    "open_obligations",
+    "diagnosis_disclaimer",
+    "visible_sections"
+  ],
+  "properties": {
+    "subject_id": {"type": "string", "minLength": 1},
+    "as_of": {"type": "string", "format": "date-time"},
+    "viewer_role": {"enum": ["clerk", "pharmacist", "verifier_pharmacist", "subject"]},
+    "responsible": {
+      "type": "object",
+      "required": ["store_id", "basis_event_id"],
+      "properties": {
+        "store_id": {"type": "string", "minLength": 1},
+        "pharmacist_id": {"type": ["string", "null"]},
+        "basis_event_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "plan": {
+      "type": "object",
+      "required": ["plan_id", "plan_version", "basis_event_id"],
+      "properties": {
+        "plan_id": {"type": "string", "minLength": 1},
+        "plan_version": {"type": "integer", "minimum": 1},
+        "basis_event_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "active_reminders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["reminder_id", "window_start", "window_end", "basis_event_id"],
+        "description": "factual_basis 对 pharmacist/verifier_pharmacist/subject 必填；clerk 视图仅给依据事件标识，不给事实内容。",
+        "properties": {
+          "reminder_id": {"type": "string", "minLength": 1},
+          "window_start": {"type": "string", "format": "date-time"},
+          "window_end": {"type": "string", "format": "date-time"},
+          "factual_basis": {"type": "object", "minProperties": 1},
+          "basis_event_id": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "open_obligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["obligation_id", "owner_store", "status", "escalated"],
+        "properties": {
+          "obligation_id": {"type": "string", "minLength": 1},
+          "owner_store": {"type": "string", "minLength": 1},
+          "status": {"enum": ["open", "fulfilled"]},
+          "escalated": {"type": "boolean"}
+        }
+      }
+    },
+    "diagnosis_disclaimer": {
+      "type": "string",
+      "const": "本系统不自动作出诊断；健康判断由具备资质的药师作出。"
+    },
+    "visible_sections": {
+      "type": "array",
+      "description": "实际向该角色开放的区块；clerk 不得包含 medical_history。",
+      "items": {"enum": ["responsible", "plan", "reminders", "open_obligations", "medical_history"]}
+    }
+  },
+  "clerk_fields": [
+    "subject_id",
+    "as_of",
+    "viewer_role",
+    "responsible.store_id",
+    "active_reminders.reminder_id",
+    "active_reminders.window_start",
+    "active_reminders.window_end",
+    "active_reminders.basis_event_id",
+    "open_obligations.obligation_id",
+    "open_obligations.owner_store",
+    "open_obligations.status",
+    "diagnosis_disclaimer",
+    "visible_sections"
+  ],
+  "additionalProperties": false
+}

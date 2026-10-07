@@ -1,9 +1,14 @@
 {
-  "event_id": "092507-005-sample-001",
-  "event_type": "CONSENT_RECORDED",
-  "aggregate_type": "care_subject",
-  "aggregate_id": "pharmacy_care_continuity-001",
+  "event_id": "evt-consent-sample",
+  "event_type": "CONSENT_GRANTED",
+  "aggregate_type": "consent_grant",
+  "aggregate_id": "grant-S-sample",
   "occurred_at": "2026-09-24T12:00:00+08:00",
   "version": 1,
-  "payload": {}
+  "payload": {
+    "subject_id": "S-sample",
+    "store_id": "store-A",
+    "scopes": ["care_profile", "medication_reminder"],
+    "granted_at": "2026-09-24T12:00:00+08:00"
+  }
 }

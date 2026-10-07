@@ -1,0 +1,65 @@
+{
+  "subject_id": "S-1001",
+  "as_of": "2026-09-25T11:30:00+08:00",
+  "viewer_role": "pharmacist",
+  "responsible": {
+    "store_id": "store-B",
+    "basis_event_id": "evt-handoff-done",
+    "pharmacist_id": "P-B"
+  },
+  "plan": {
+    "plan_id": "plan-S-1001",
+    "plan_version": 2,
+    "basis_event_id": "evt-plan-2"
+  },
+  "active_reminders": [
+    {
+      "reminder_id": "reminder-S-1001-02",
+      "window_start": "2026-09-23T09:00:00+08:00",
+      "window_end": "2026-09-25T21:00:00+08:00",
+      "factual_basis": {
+        "based_on_event_id": "evt-plan-1",
+        "reason": "计划v1续方提醒"
+      },
+      "basis_event_id": "evt-reminder-2"
+    },
+    {
+      "reminder_id": "reminder-S-1001-03",
+      "window_start": "2026-09-25T10:00:00+08:00",
+      "window_end": "2026-09-25T20:00:00+08:00",
+      "factual_basis": {
+        "based_on_event_id": "evt-plan-2",
+        "reason": "计划v2用药时点"
+      },
+      "basis_event_id": "evt-reminder-3"
+    }
+  ],
+  "open_obligations": [
+    {
+      "obligation_id": "obligation-S-1001-01",
+      "owner_store": "store-A",
+      "status": "fulfilled",
+      "escalated": false
+    },
+    {
+      "obligation_id": "obligation-S-1001-02",
+      "owner_store": "store-B",
+      "status": "open",
+      "escalated": false
+    },
+    {
+      "obligation_id": "obligation-S-1001-03",
+      "owner_store": "store-B",
+      "status": "open",
+      "escalated": true
+    }
+  ],
+  "diagnosis_disclaimer": "本系统不自动作出诊断；健康判断由具备资质的药师作出。",
+  "visible_sections": [
+    "responsible",
+    "plan",
+    "reminders",
+    "open_obligations",
+    "medical_history"
+  ]
+}
