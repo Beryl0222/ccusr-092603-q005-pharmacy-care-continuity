@@ -6,9 +6,10 @@
 
 - `contracts/domain.schema.json`：事件信封、对象类型和事件载荷约定。
 - `data/sample.json`：可直接校验的中文联调样例。
-- `src/pharmacy_care_continuity/`：契约校验与命令行入口。
-- `tests/`：基础字段、时间版本和事件载荷边界测试。
-- `docs/domain.md`：领域对象与事件语义。
+- `src/pharmacy_care_continuity/contracts.py`：交换层契约校验与命令行入口。
+- `src/pharmacy_care_continuity/chain.py`：责任链业务层（事件溯源、授权、资质、去重核验、承接、恢复、受限接口）。
+- `tests/`：交换层字段/时间/版本/载荷测试与责任链业务规则测试。
+- `docs/domain.md`：领域对象、事件语义与业务规则。
 
 ## 测试
 

@@ -1,9 +1,18 @@
 {
   "event_id": "092507-005-sample-001",
   "event_type": "CONSENT_RECORDED",
-  "aggregate_type": "care_subject",
-  "aggregate_id": "pharmacy_care_continuity-001",
+  "aggregate_type": "consent_grant",
+  "aggregate_id": "consent-001",
   "occurred_at": "2026-09-24T12:00:00+08:00",
   "version": 1,
-  "payload": {}
+  "payload": {
+    "customer_id": "customer-001",
+    "scopes": [
+      "medication_reminder",
+      "adherence_followup",
+      "cross_store_handoff"
+    ],
+    "granted": true,
+    "recorded_by": "store-a"
+  }
 }

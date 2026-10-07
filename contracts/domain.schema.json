@@ -20,19 +20,41 @@
       "type": "string",
       "enum": [
         "CONSENT_RECORDED",
+        "CONSENT_SCOPE_WITHDRAWN",
         "PLAN_ACTIVATED",
+        "PLAN_SUPPLANTED",
+        "PHARMACIST_QUALIFICATION_REGISTERED",
+        "PHARMACIST_SHIFT_OPENED",
+        "PHARMACIST_SHIFT_CLOSED",
+        "SOURCE_DECLARED",
+        "REMINDER_DUE_CALLED",
         "SERVICE_CONFIRMED",
+        "DISCREPANCY_RESOLVED",
+        "EXCEPTION_ESCALATED",
         "STORE_WITHDRAWN",
-        "HANDOFF_COMPLETED"
+        "HANDOFF_ACCEPTED",
+        "HANDOFF_REJECTED",
+        "HANDOFF_COMPLETED",
+        "EMERGENCY_STOCK_COMMITTED",
+        "EXIT_DECIDED",
+        "LEGAL_PROOF_ISSUED"
       ]
     },
     "aggregate_type": {
       "type": "string",
       "enum": [
         "care_subject",
+        "consent_grant",
         "service_plan",
+        "pharmacist_directory",
         "pharmacist_assignment",
-        "continuity_handoff"
+        "medication_source",
+        "service_fact",
+        "escalation_case",
+        "continuity_handoff",
+        "emergency_stock_commitment",
+        "exit_record",
+        "legal_proof"
       ]
     },
     "aggregate_id": {
@@ -52,17 +74,178 @@
     }
   },
   "payload_required_by_event": {
+    "CONSENT_RECORDED": [
+      "customer_id",
+      "scopes",
+      "granted",
+      "recorded_by"
+    ],
+    "CONSENT_SCOPE_WITHDRAWN": [
+      "customer_id",
+      "scope",
+      "withdrawn_by",
+      "withdrawn_at"
+    ],
     "PLAN_ACTIVATED": [
+      "plan_id",
       "plan_version",
-      "pharmacist_id"
+      "customer_id",
+      "pharmacist_id",
+      "store_id",
+      "basis_event_ids",
+      "obligations",
+      "sales_offer_id",
+      "diagnosis_declined",
+      "valid_from",
+      "valid_until"
+    ],
+    "PLAN_SUPPLANTED": [
+      "plan_id",
+      "plan_version",
+      "customer_id",
+      "pharmacist_id",
+      "store_id",
+      "basis_event_ids",
+      "obligations",
+      "sales_offer_id",
+      "diagnosis_declined",
+      "valid_from",
+      "valid_until",
+      "supersedes_version"
+    ],
+    "PHARMACIST_QUALIFICATION_REGISTERED": [
+      "pharmacist_id",
+      "license_no",
+      "valid_from",
+      "valid_until",
+      "registered_by"
+    ],
+    "PHARMACIST_SHIFT_OPENED": [
+      "pharmacist_id",
+      "store_id",
+      "valid_from",
+      "valid_until"
+    ],
+    "PHARMACIST_SHIFT_CLOSED": [
+      "pharmacist_id",
+      "store_id",
+      "effective_at"
+    ],
+    "SOURCE_DECLARED": [
+      "customer_id",
+      "medication_key",
+      "source_kind",
+      "declared_by",
+      "declared_at"
+    ],
+    "REMINDER_DUE_CALLED": [
+      "customer_id",
+      "fact_kind",
+      "plan_id",
+      "plan_version",
+      "store_id",
+      "obligation_key",
+      "fact_key",
+      "window_start",
+      "window_end",
+      "called_at",
+      "evidence_event_ids",
+      "diagnosis_declined"
+    ],
+    "SERVICE_CONFIRMED": [
+      "fact_key",
+      "fact_kind",
+      "customer_id",
+      "plan_id",
+      "plan_version",
+      "obligation_key",
+      "store_id",
+      "pharmacist_id",
+      "outcome",
+      "notes",
+      "confirmed_at",
+      "personally_performed",
+      "sales_offer_id"
+    ],
+    "DISCREPANCY_RESOLVED": [
+      "fact_key",
+      "customer_id",
+      "verifier_pharmacist_id",
+      "verifier_store_id",
+      "sales_independent",
+      "chosen_confirmation_id",
+      "resolved_at"
+    ],
+    "EXCEPTION_ESCALATED": [
+      "fact_key",
+      "customer_id",
+      "plan_id",
+      "plan_version",
+      "obligation_key",
+      "store_id",
+      "pharmacist_id",
+      "reason_code",
+      "window_start",
+      "window_end",
+      "escalated_at",
+      "evidence_event_ids"
     ],
     "STORE_WITHDRAWN": [
+      "store_id",
       "effective_at",
       "reason"
     ],
-    "HANDOFF_COMPLETED": [
+    "HANDOFF_ACCEPTED": [
+      "handoff_id",
+      "customer_id",
       "from_store",
-      "to_store"
+      "to_store",
+      "accepting_pharmacist_id",
+      "obligation_keys",
+      "plan_id",
+      "plan_version",
+      "accepted_at"
+    ],
+    "HANDOFF_REJECTED": [
+      "handoff_id",
+      "from_store",
+      "to_store",
+      "reason",
+      "rejected_at"
+    ],
+    "HANDOFF_COMPLETED": [
+      "handoff_id",
+      "from_store",
+      "to_store",
+      "transferred_obligation_keys",
+      "completed_at"
+    ],
+    "EMERGENCY_STOCK_COMMITTED": [
+      "commitment_id",
+      "customer_id",
+      "store_id",
+      "medication_key",
+      "quantity",
+      "valid_until",
+      "committed_by",
+      "committed_at"
+    ],
+    "EXIT_DECIDED": [
+      "customer_id",
+      "scope",
+      "decided_by",
+      "decided_at",
+      "reason"
+    ],
+    "LEGAL_PROOF_ISSUED": [
+      "proof_id",
+      "customer_id",
+      "store_id",
+      "proof_kind",
+      "period_start",
+      "period_end",
+      "issued_at",
+      "issued_by"
     ]
   },
   "additionalProperties": false
